@@ -41,7 +41,7 @@ import { Component, OnInit } from '@angular/core';
   ])
   ]
 })
-export class acessoComponent implements OnInit {
+export class AcessoComponent implements OnInit {
 
   public estadoBanner = 'criado';
   public estadoPainel = 'criado';
