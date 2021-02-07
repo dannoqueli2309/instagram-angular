@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +14,7 @@ import { HomeComponent } from './home/home.component';
 import { PublicacoesComponent } from './home/publicacoes/publicacoes.component';
 import { RouterModule } from '@angular/router';
 import { ROUTES } from './app.routes';
+import { AutenticacaoGuard } from './autenticacao-guard.service';
 
 @NgModule({
   declarations: [
@@ -23,16 +24,16 @@ import { ROUTES } from './app.routes';
     LoginComponent,
     CadastroComponent,
     HomeComponent,
-    PublicacoesComponent
+    PublicacoesComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(ROUTES)
+    RouterModule.forRoot(ROUTES),
   ],
-  providers: [Autenticacao],
-  bootstrap: [AppComponent]
+  providers: [Autenticacao, AutenticacaoGuard],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
