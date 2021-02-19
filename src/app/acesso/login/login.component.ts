@@ -28,6 +28,5 @@ export class LoginComponent implements OnInit {
       this.formulario.value.email,
       this.formulario.value.senha
     );
-    console.log(this.formulario);
   }
 }

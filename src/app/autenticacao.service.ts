@@ -10,7 +10,6 @@ export class Autenticacao {
   constructor(private router: Router) {}
 
   public cadastrarUsuario(usuario: Usuario): Promise<any> {
-    console.log('chegamos aqui', usuario);
     return firebase
       .auth()
       .createUserWithEmailAndPassword(usuario.email, usuario.senha)
@@ -22,7 +21,6 @@ export class Autenticacao {
           .database()
           .ref(`usuario_detalhes/${btoa(usuario.email)}`)
           .set({ usuario });
-        console.log(resposta);
       })
       .catch((error: Error) => {
         console.log(error);
@@ -40,7 +38,6 @@ export class Autenticacao {
             this.token_id = idToken;
             localStorage.setItem('idToken', idToken);
             this.router.navigate(['/home']);
-            console.log(this.token_id);
           });
       })
       .catch((error) => console.log('O Erro é', error));
