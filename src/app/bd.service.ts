@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
+
 import { Progressso } from './progresso.service';
 
 @Injectable()
@@ -39,12 +40,31 @@ export class Bd {
       });
   }
   public consultaPublicacao(emailUsuario: string): any {
+    console.log(emailUsuario);
+
     firebase
       .database()
-      .ref(`publicacoes/${btoa(emailUsuario)}`)
+      .ref(`publicacao/${btoa(emailUsuario)}`)
       .once('value')
       .then((snapshot: any) => {
-        console.log(snapshot.val());
+        //console.log(snapshot.val());
+
+        let publicacoes: Array<any> = [];
+
+        snapshot.forEach((childSnaphot: any) => {
+          let publicacao = childSnaphot.val();
+
+          firebase
+            .storage()
+            .ref()
+            .child(`imagens/${childSnaphot.key}`)
+            .getDownloadURL()
+            .then((url: string) => {
+              publicacao.url_imagem = url;
+              publicacoes.push(publicacao);
+            });
+        });
+        console.log(publicacoes);
       });
   }
 }
