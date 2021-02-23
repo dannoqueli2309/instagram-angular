@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { resolve } from 'dns';
 import * as firebase from 'firebase';
 
 import { Progressso } from './progresso.service';
@@ -39,32 +40,40 @@ export class Bd {
           );
       });
   }
-  public consultaPublicacao(emailUsuario: string): any {
-    console.log(emailUsuario);
+  public consultaPublicacao(emailUsuario: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      firebase
+        .database()
+        .ref(`publicacao/${btoa(emailUsuario)}`)
+        .once('value')
+        .then((snapshot: any) => {
+          let publicacoes: Array<any> = [];
 
-    firebase
-      .database()
-      .ref(`publicacao/${btoa(emailUsuario)}`)
-      .once('value')
-      .then((snapshot: any) => {
-        //console.log(snapshot.val());
+          snapshot.forEach((childSnaphot: any) => {
+            let publicacao = childSnaphot.val();
 
-        let publicacoes: Array<any> = [];
+            // recuperando a url da imagem
+            firebase
+              .storage()
+              .ref()
+              .child(`imagens/${childSnaphot.key}`)
+              .getDownloadURL()
+              .then((url: string) => {
+                publicacao.url_imagem = url;
 
-        snapshot.forEach((childSnaphot: any) => {
-          let publicacao = childSnaphot.val();
-
-          firebase
-            .storage()
-            .ref()
-            .child(`imagens/${childSnaphot.key}`)
-            .getDownloadURL()
-            .then((url: string) => {
-              publicacao.url_imagem = url;
-              publicacoes.push(publicacao);
-            });
+                ///Recuperando as informacaoes no usuario
+                firebase
+                  .database()
+                  .ref(`usuario_detalhes/${btoa(emailUsuario)}`)
+                  .once('value')
+                  .then((snapshot: any) => {
+                    publicacao.nome_usuario = snapshot.val().usuario.nome_usuario;
+                    publicacoes.push(publicacao);
+                  });
+              });
+          });
+          resolve(publicacoes);
         });
-        console.log(publicacoes);
-      });
+    });
   }
 }

@@ -9,6 +9,7 @@ import { Bd } from 'src/app/bd.service';
 })
 export class PublicacoesComponent implements OnInit {
   public email: string;
+  public publicacoes: any;
   constructor(private bd: Bd) {}
 
   ngOnInit(): void {
@@ -19,6 +20,8 @@ export class PublicacoesComponent implements OnInit {
   }
 
   public atualizarTimeLine(): void {
-    this.bd.consultaPublicacao(this.email);
+    this.bd.consultaPublicacao(this.email).then((publicacoes: any) => {
+      this.publicacoes = publicacoes;
+    });
   }
 }
