@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { resolve } from 'dns';
 import * as firebase from 'firebase';
 
 import { Progressso } from './progresso.service';
@@ -45,18 +44,27 @@ export class Bd {
       firebase
         .database()
         .ref(`publicacao/${btoa(emailUsuario)}`)
+        .orderByKey()
         .once('value')
         .then((snapshot: any) => {
           let publicacoes: Array<any> = [];
 
           snapshot.forEach((childSnaphot: any) => {
             let publicacao = childSnaphot.val();
+            publicacao.key = childSnaphot.key;
 
-            // recuperando a url da imagem
+            publicacoes.push(publicacao);
+          });
+
+          return publicacoes.reverse();
+        })
+        .then((publicacoes: any) => {
+          // // recuperando a url da imagem
+          publicacoes.forEach((publicacao) => {
             firebase
               .storage()
               .ref()
-              .child(`imagens/${childSnaphot.key}`)
+              .child(`imagens/${publicacao.key}`)
               .getDownloadURL()
               .then((url: string) => {
                 publicacao.url_imagem = url;
@@ -68,7 +76,6 @@ export class Bd {
                   .once('value')
                   .then((snapshot: any) => {
                     publicacao.nome_usuario = snapshot.val().usuario.nome_usuario;
-                    publicacoes.push(publicacao);
                   });
               });
           });
@@ -77,3 +84,5 @@ export class Bd {
     });
   }
 }
+
+//
